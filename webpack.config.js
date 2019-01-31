@@ -8,6 +8,7 @@ const srcFolder = "./App/"
 
 module.exports = {
     entry: [
+	'./node_modules/babel-polyfill',
         srcFolder + "index.jsx" 
     ], 
     devtool: "source-map",

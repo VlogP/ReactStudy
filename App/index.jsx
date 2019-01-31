@@ -1,86 +1,141 @@
 ﻿import React from 'react';
 import ReactDOM from 'react-dom';
+import{Provider,connect}from 'react-redux';
+import {createStore, applyMiddleware,compose } from 'redux';
+import createSagaMiddleware from 'redux-saga';
+import {put, call,takeEvery} from 'redux-saga/effects';
 
-class Header extends React.Component {
-render(){
-return <h1>Header</h1>	
-}
-}
 
-class Hello extends React.Component {
-	constructor(props){
-		super(props);
-    this.state = {String: "ll",Increment:0};
-	this.down = this.down.bind(this);
-	}
-	down(){
-		 let letter=this.state.String==="l"?"ll":"l";
-		 
-		 this.setState({String: letter,Increment:this.state.Increment+1});
-		 
-		
+// Reducer
+const initialState = {
+  Name:'',
+  Password:'',
+  error: true,
 };
-		
-	
-render(){
-return <div className="Hello">
-<h2><Clock/></h2>
-<h1>{this.props.String}</h1>
-<h1>{this.state.Increment}</h1>
-<button onClick={this.down}>{this.state.String}{this.state.Increment}</button></div>
+const reducer = (state = initialState, action) => {
+  switch (action.type) {
+    case 'REQUESTED_DOG':
+      return {
+        url: '',
+        loading: true,
+        error: false,
+      };
+    case 'REQUESTED_DOG_SUCCEEDED':
+      return {
+        Name: action.Name,
+        error: action.error
+      };
+    case 'REQUESTED_DOG_FAILED':
+      return {
+        error: true,
+      };
+    default:
+      return state;
+  }
+};
+
+// Action Creators
+const requestDog = () => {
+  return { type: 'REQUESTED_DOG' }
+};
+
+const requestDogSuccess = (data) => {
+	console.log(data);
+  return { type: 'REQUESTED_DOG_SUCCEEDED', error: data}
+};
+
+const requestDogError = () => {
+  return { type: 'REQUESTED_DOG_FAILED' }
+};
+
+
+function validateAge(age){
+  var myRe = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?!.*[!-+.@#$%^&*]).{8,15}$/;
+  var myArray = myRe.test(age);
+    return myArray;
 }
+function validateName(name){
+    return name.name.length<2;
 }
-Hello.defaultProps = {String: "Tom"};
 
+// Sagas
+function* watchFetchDog() {
 
-class Clock extends React.Component {
-            constructor(props) {
-              super(props);
-              this.state = {date: new Date(), name: "Tom",Increment:0};
-            }
+  yield takeEvery('FETCHED_DOG', PasswordAsync);
+
+}
+
+function* PasswordAsync(e) {
+  try {
     
-            componentDidMount() {
-              this.timerId = setInterval(
-                ()=> this.tick(),
-                1000
-              );
-            }
+    const data = yield call(validateName,{name:e.Name});
     
-            componentWillUnmount() {
-              clearInterval(this.timerId);
-            }
-    
-            tick() {
-              this.setState({
-                date: new Date(),
-				Increment:this.state.Increment+1
-              });
-            }
-    
-            render() {
-              return (
-                <div>
-                  <h1>Привет, {this.state.name},{this.state.Increment}</h1>
-                  <h2>Текущее время {this.state.date.toLocaleTimeString()}.</h2>
-                </div>
-              );
-            }
-          }
+    yield put(requestDogSuccess(data));
+  } catch (error) {
+	  console.log(11);
+    yield put(requestDogError());
+  }
+}
 
-
-
-
-
-
-
-
-
-
-
-
-
+// Component
+class App extends React.Component {
  
+  render () {
+    return (
+      <form >
+      <p>
+          <label>Имя:</label><br />
+          <input type="text" 
+              onChange={this.props.fetchDog} style={this.props.error ? {borderColor:"red"}:{borderColor:"green"}} />
+      </p>
+      
+
+      <input type="submit" value="Отправить" />
+  </form>
+    )
+  }
+}
+
+// Store
+
+
+
+
+const mapStateToProps = state => {
+  return {
+    url: state.url,
+    loading: state.loading,
+    error:state.error
+  };
+};
+
+const mapDispatchToProps =dispatch =>{
+  return{
+  fetchDog: (Name) => dispatch({ type: "FETCHED_DOG",Name:Name.target.value })
+  
+  };
+};
+
+
+export default App=connect(mapStateToProps, mapDispatchToProps)(App); 
+
+
+
+
+
+ const sagaMiddleware = createSagaMiddleware();
+
+ const store = createStore(
+   reducer,
+   applyMiddleware(sagaMiddleware)
+ );
+ 
+ sagaMiddleware.run(watchFetchDog);
+
+// Container component
 ReactDOM.render(
-  <Hello />,
+  <Provider store={store}>
+    <App />
+  </Provider>,
   document.getElementById('content')
 );
