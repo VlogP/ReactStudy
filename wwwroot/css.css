@@ -1,55 +1,51 @@
 
-ol, ul {
-  padding-left: 30px;
-}
 
-.Hello {
-	display:block;
+ul {
+    margin-left: 0; 
+    padding-left: 0; 
+}
 	
-  margin-left: 40%;
-  color:red;
-   
+
+.paper li {
+
+ list-style-type: none; 
+ margin:auto;
+ 
  
 }
-
-.board-row:after {
-  clear: both;
-  content: "";
-  display: table;
+.paper ul {
+ margin-top:5px;
 }
 
-.status {
-  margin-bottom: 10px;
+
+.paper{
+text-align:center;
+width:600px;
+margin:auto;
+margin-top:40px;
+padding-left:20px;
+padding-top:20px;
+padding-right:20px;
+padding-bottom:20px;
+
 }
 
-.square {
-  background: #fff;
-  border: 1px solid #999;
-  float: left;
-  font-size: 24px;
-  font-weight: bold;
-  line-height: 34px;
-  height: 34px;
-  margin-right: -1px;
-  margin-top: -1px;
-  padding: 0;
-  text-align: center;
-  width: 34px;
+.paper .formButton{
+margin-top:20px;
 }
 
-.square:focus {
-  outline: none;
+.paper h3{
+letter-spacing: 5px;
+font-weight: bold;
+font-family: "Times New Roman", Georgia, Serif;
+font-style:italic;
+color:#AB47BC;
 }
 
-.kbd-navigation .square:focus {
-  background: #ddd;
-}
+.ErrorsMessage li{
+	list-style-type:disc; 
+	text-align:left;
+    color:crimson;
+	margin-bottom:5px;
 
-.game {
-  display: flex;
-  flex-direction: row;
-}
-
-.game-info {
-  margin-left: 20px;
 }
